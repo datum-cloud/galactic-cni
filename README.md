@@ -8,8 +8,8 @@ The commands are executed according to the basename of the binary.
 If you download the main binary here, rename it according to the tool 
 you wish to use.
 
-## galactic-cni
-Kubernetes CNI plugin.
-
 ## galactic-cli
 User command-line interface for debugging and troubleshooting.
+
+## galactic-cni
+Kubernetes CNI plugin.
