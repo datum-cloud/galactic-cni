@@ -29,7 +29,7 @@ func Add(ip *net.IPNet, id int) error {
 		LinkIndex: link.Attrs().Index,
 		Encap:     encap,
 	}
-	return netlink.RouteAdd(route)
+	return netlink.RouteReplace(route)
 }
 
 func Delete(ip *net.IPNet, id int) error {
