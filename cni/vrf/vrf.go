@@ -1,15 +1,13 @@
 package vrf
 
 import (
-	"fmt"
 	"github.com/datum-cloud/galactic/cni/sysctl"
+	"github.com/datum-cloud/galactic/util"
 	"github.com/vishvananda/netlink"
 )
 
-const VrfNameTemplate = "galactic%d-vrf"
-
 func Add(id int) error {
-	name := fmt.Sprintf(VrfNameTemplate, id)
+	name := util.GenerateInterfaceNameVRF(id)
 
 	vrf := &netlink.Vrf{
 		LinkAttrs: netlink.LinkAttrs{
@@ -30,7 +28,7 @@ func Add(id int) error {
 }
 
 func Delete(id int) error {
-	link, err := netlink.LinkByName(fmt.Sprintf(VrfNameTemplate, id))
+	link, err := netlink.LinkByName(util.GenerateInterfaceNameVRF(id))
 	if err != nil {
 		return err
 	}

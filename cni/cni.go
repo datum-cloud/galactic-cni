@@ -2,7 +2,6 @@ package cni
 
 import (
 	"encoding/json"
-	"fmt"
 
 	"github.com/spf13/cobra"
 
@@ -15,6 +14,7 @@ import (
 	"github.com/datum-cloud/galactic/cni/route"
 	"github.com/datum-cloud/galactic/cni/veth"
 	"github.com/datum-cloud/galactic/cni/vrf"
+	"github.com/datum-cloud/galactic/util"
 )
 
 type Termination struct {
@@ -58,7 +58,7 @@ func cmdAdd(args *skel.CmdArgs) error {
 	if err := veth.Add(pluginConf.Id, pluginConf.MTU); err != nil {
 		return err
 	}
-	dev := fmt.Sprintf(veth.VethNameTemplateHost, pluginConf.Id)
+	dev := util.GenerateInterfaceNameHost(pluginConf.Id)
 	for _, termination := range pluginConf.Terminations {
 		if err := route.Add(pluginConf.Id, termination.Network, termination.Via, dev); err != nil {
 			return err
@@ -70,7 +70,7 @@ func cmdAdd(args *skel.CmdArgs) error {
 
 func cmdDel(args *skel.CmdArgs) error {
 	pluginConf, _ := parseConf(args.StdinData)
-	dev := fmt.Sprintf(veth.VethNameTemplateHost, pluginConf.Id)
+	dev := util.GenerateInterfaceNameHost(pluginConf.Id)
 	for _, termination := range pluginConf.Terminations {
 		if err := route.Delete(pluginConf.Id, termination.Network, termination.Via, dev); err != nil {
 			return err

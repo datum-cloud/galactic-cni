@@ -2,14 +2,12 @@ package veth
 
 import (
 	"fmt"
+
 	"github.com/coreos/go-iptables/iptables"
 	"github.com/datum-cloud/galactic/cni/sysctl"
-	"github.com/datum-cloud/galactic/cni/vrf"
+	"github.com/datum-cloud/galactic/util"
 	"github.com/vishvananda/netlink"
 )
-
-const VethNameTemplateHost = "galactic%d-host"
-const VethNameTemplateGuest = "galactic%d-guest"
 
 func updateForwardRule(interfaceName string, action string) error {
 	ruleSpec := []string{"-o", interfaceName, "-j", "ACCEPT"}
@@ -39,9 +37,9 @@ func updateForwardRule(interfaceName string, action string) error {
 }
 
 func Add(id, mtu int) error {
-	vrfName := fmt.Sprintf(vrf.VrfNameTemplate, id)
-	hostName := fmt.Sprintf(VethNameTemplateHost, id)
-	guestName := fmt.Sprintf(VethNameTemplateGuest, id)
+	vrfName := util.GenerateInterfaceNameVRF(id)
+	hostName := util.GenerateInterfaceNameHost(id)
+	guestName := util.GenerateInterfaceNameGuest(id)
 
 	veth := &netlink.Veth{
 		LinkAttrs: netlink.LinkAttrs{
@@ -87,7 +85,7 @@ func Add(id, mtu int) error {
 }
 
 func Delete(id, mtu int) error {
-	hostName := fmt.Sprintf(VethNameTemplateHost, id)
+	hostName := util.GenerateInterfaceNameHost(id)
 
 	if err := updateForwardRule(hostName, "delete"); err != nil {
 		return err
