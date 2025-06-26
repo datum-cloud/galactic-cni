@@ -25,6 +25,7 @@ jobs:
 
   build:
     name: build
+    needs: lint
     runs-on: ubuntu-latest
     strategy:
       matrix:
