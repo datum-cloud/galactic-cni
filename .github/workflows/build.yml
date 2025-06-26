@@ -1,0 +1,46 @@
+name: build
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+  pull-requests: read
+
+jobs:
+  lint:
+    name: lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: stable
+      - uses: golangci/golangci-lint-action@v8
+
+  build:
+    name: build
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        arch:
+          - amd64
+          - arm64
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: stable
+      - name: build
+        run: |
+          CGO_ENABLED=0 \
+          GOARCH=${{ matrix.arch }} \
+          GOOS=linux \
+          go build -o galactic-${{ matrix.arch }} ./main.go
+      - name: upload
+        uses: actions/upload-artifact@v4
+        with:
+          name: galactic-${{ matrix.arch }}
+          path: galactic-${{ matrix.arch }}
