@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"os"
 	"path/filepath"
@@ -9,6 +10,7 @@ import (
 
 	"github.com/datum-cloud/galactic/cli"
 	"github.com/datum-cloud/galactic/cni"
+	"github.com/datum-cloud/galactic/debug"
 )
 
 func main() {
@@ -25,6 +27,15 @@ func main() {
 	default:
 		log.Fatalf("Unknown binary name: %s. Should be one of galactic-cli or galactic-cni.", basename)
 	}
+
+	versionCmd := &cobra.Command{
+		Use:   "version",
+		Short: "Print version details",
+		Run: func(cmd *cobra.Command, args []string) {
+			fmt.Println(debug.Version())
+		},
+	}
+	cmd.AddCommand(versionCmd)
 
 	cmd.SetArgs(args)
 	if err := cmd.Execute(); err != nil {
