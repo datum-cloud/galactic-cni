@@ -13,9 +13,6 @@ jobs:
   lint:
     name: lint
     runs-on: ubuntu-latest
-    env:
-      CGO_ENABLED: 0
-      GOOS: linux
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-go@v5
@@ -32,20 +29,26 @@ jobs:
         arch:
           - amd64
           - arm64
-    env:
-      CGO_ENABLED: 0
-      GOOS: linux
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-go@v5
-        with:
-          go-version: stable
+      - uses: docker/setup-qemu-action@v3
+      - uses: docker/setup-buildx-action@v3
       - name: test
         run: |
-          GOARCH=${{ matrix.arch }} go test ./...
+          docker run --rm \
+                     -v ${{ github.workspace }}:/src \
+                     -w /src \
+                     --platform linux/${{ matrix.arch }} \
+                     golang \
+                     go test ./...
       - name: build
         run: |
-          GOARCH=${{ matrix.arch }} go build -o galactic-${{ matrix.arch }} ./main.go
+          docker run --rm \
+                     -v ${{ github.workspace }}:/src \
+                     -w /src \
+                     --platform linux/${{ matrix.arch }} \
+                     golang \
+                     go build -o galactic-${{ matrix.arch }} ./main.go
       - name: upload
         uses: actions/upload-artifact@v4
         with:
