@@ -14,6 +14,7 @@ import (
 	"github.com/datum-cloud/galactic/cni/route"
 	"github.com/datum-cloud/galactic/cni/veth"
 	"github.com/datum-cloud/galactic/cni/vrf"
+	"github.com/datum-cloud/galactic/debug"
 	"github.com/datum-cloud/galactic/util"
 )
 
@@ -37,7 +38,7 @@ func NewCommand() *cobra.Command {
 			skel.PluginMainFuncs(skel.CNIFuncs{
 				Add: cmdAdd,
 				Del: cmdDel,
-			}, version.All, bv.BuildString("none"))
+			}, version.All, bv.BuildString(debug.Version()))
 		},
 	}
 }

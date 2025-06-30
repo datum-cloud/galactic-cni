@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+  workflow_call:
 
 permissions:
   contents: read
@@ -29,6 +30,9 @@ jobs:
         arch:
           - amd64
           - arm64
+    env:
+      DEBUG_VERSION: ${{ github.ref_name }}
+      DEBUG_REF: ${{ github.sha }}
     steps:
       - uses: actions/checkout@v4
       - uses: docker/setup-qemu-action@v3
@@ -45,7 +49,9 @@ jobs:
                      --platform linux/${{ matrix.arch }} \
                      -e CGO_ENABLED=0 \
                      golang \
-                     go build -o galactic-${{ matrix.arch }} ./main.go
+                     go build \
+                       -ldflags "-X 'github.com/datum-cloud/galactic/debug.DebugVersion=${DEBUG_VERSION}' -X 'github.com/datum-cloud/galactic/debug.DebugRef=${DEBUG_REF}'" \
+                       -o galactic-${{ matrix.arch }} ./main.go
       - name: upload
         uses: actions/upload-artifact@v4
         with:
