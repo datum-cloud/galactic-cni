@@ -2,6 +2,7 @@ package cni
 
 import (
 	"encoding/json"
+	"fmt"
 
 	"github.com/spf13/cobra"
 
@@ -9,7 +10,6 @@ import (
 	"github.com/containernetworking/cni/pkg/types"
 	type100 "github.com/containernetworking/cni/pkg/types/100"
 	"github.com/containernetworking/cni/pkg/version"
-	bv "github.com/containernetworking/plugins/pkg/utils/buildversion"
 
 	"github.com/datum-cloud/galactic/cni/route"
 	"github.com/datum-cloud/galactic/cni/veth"
@@ -35,10 +35,14 @@ func NewCommand() *cobra.Command {
 		Use:   "galactic-cni",
 		Short: "Galactic CNI plugin",
 		Run: func(cmd *cobra.Command, args []string) {
-			skel.PluginMainFuncs(skel.CNIFuncs{
-				Add: cmdAdd,
-				Del: cmdDel,
-			}, version.All, bv.BuildString(debug.Version()))
+			skel.PluginMainFuncs(
+				skel.CNIFuncs{
+					Add: cmdAdd,
+					Del: cmdDel,
+				},
+				version.All,
+				fmt.Sprintf("CNI galactic plugin %s", debug.Version()),
+			)
 		},
 	}
 }
