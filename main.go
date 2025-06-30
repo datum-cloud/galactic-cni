@@ -5,6 +5,7 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"strings"
 
 	"github.com/spf13/cobra"
 
@@ -19,10 +20,10 @@ func main() {
 
 	var cmd *cobra.Command
 
-	switch basename {
-	case "galactic-cli":
+	switch {
+	case strings.HasPrefix(basename, "galactic-cli"):
 		cmd = cli.NewCommand()
-	case "galactic-cni":
+	case strings.HasPrefix(basename, "galactic-cni"):
 		cmd = cni.NewCommand()
 	default:
 		log.Fatalf("Unknown binary name: %s. Should be one of galactic-cli or galactic-cni.", basename)
