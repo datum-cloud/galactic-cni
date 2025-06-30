@@ -24,6 +24,9 @@ func ParseSegments(input string) ([]net.IP, error) {
 		if err != nil {
 			return nil, fmt.Errorf("could not parse ip (%s): %v", s, err)
 		}
+		if ip.To4() != nil {
+			return nil, fmt.Errorf("not an ipv6 address: %s", s)
+		}
 		segments = append([]net.IP{ip}, segments...)
 	}
 	if len(segments) == 0 {

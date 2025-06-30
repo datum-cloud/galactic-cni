@@ -40,6 +40,9 @@ jobs:
       - uses: actions/setup-go@v5
         with:
           go-version: stable
+      - name: test
+        run: |
+          GOARCH=${{ matrix.arch }} go test ./...
       - name: build
         run: |
           GOARCH=${{ matrix.arch }} go build -o galactic-${{ matrix.arch }} ./main.go
