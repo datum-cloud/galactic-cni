@@ -40,7 +40,7 @@ jobs:
                      -w /src \
                      --platform linux/${{ matrix.arch }} \
                      golang \
-                     go test ./...
+                     go test -v ./...
       - name: build
         run: |
           docker run --rm \
