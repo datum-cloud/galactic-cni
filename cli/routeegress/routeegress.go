@@ -7,7 +7,7 @@ import (
 	"github.com/vishvananda/netlink/nl"
 )
 
-const LoopbackDevice = "lo-srv6"
+const LoopbackDevice = "lo-galactic"
 
 func Add(id int, prefix *net.IPNet, segments []net.IP) error {
 	link, err := netlink.LinkByName(LoopbackDevice)
