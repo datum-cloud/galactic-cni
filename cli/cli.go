@@ -2,10 +2,11 @@ package cli
 
 import (
 	"log"
-	"strconv"
+	"strings"
 
 	"github.com/spf13/cobra"
 
+	"github.com/kenshaw/baseconv"
 	"github.com/vishvananda/netlink"
 
 	"github.com/datum-cloud/galactic/cli/neighborproxy"
@@ -25,39 +26,47 @@ func NewCommand() *cobra.Command {
 		Short: "Manage ingress routes",
 	}
 	routeIngressAddCmd := &cobra.Command{
-		Use:   "add [ip] [id]",
+		Use:   "add <ip> <vpc> <vpcattachment>",
 		Short: "Add an ingress route",
-		Args:  cobra.ExactArgs(2),
+		Args:  cobra.ExactArgs(3),
 		Run: func(cmd *cobra.Command, args []string) {
 			ip, err := netlink.ParseIPNet(args[0])
 			if err != nil {
 				log.Fatalf("Invalid ip: %v", err)
 			}
-			id, err := strconv.Atoi(args[1])
+			vpc, err := ToBase62(args[1])
 			if err != nil {
-				log.Fatalf("Invalid id: %v", err)
+				log.Fatalf("Invalid vpc: %v", err)
+			}
+			vpcAttachment, err := ToBase62(args[2])
+			if err != nil {
+				log.Fatalf("Invalid vpcattachment: %v", err)
 			}
 
-			if err := routeingress.Add(ip, id); err != nil {
+			if err := routeingress.Add(ip, vpc, vpcAttachment); err != nil {
 				log.Fatalf("routeingress add failed: %v", err)
 			}
 		},
 	}
 	routeIngressDelCmd := &cobra.Command{
-		Use:   "del [ip] [id]",
+		Use:   "del <ip> <vpc> <vpcattachment>",
 		Short: "Delete an ingress route",
-		Args:  cobra.ExactArgs(2),
+		Args:  cobra.ExactArgs(3),
 		Run: func(cmd *cobra.Command, args []string) {
 			ip, err := netlink.ParseIPNet(args[0])
 			if err != nil {
 				log.Fatalf("Invalid ip: %v", err)
 			}
-			id, err := strconv.Atoi(args[1])
+			vpc, err := ToBase62(args[1])
 			if err != nil {
-				log.Fatalf("Invalid id: %v", err)
+				log.Fatalf("Invalid vpc: %v", err)
+			}
+			vpcAttachment, err := ToBase62(args[2])
+			if err != nil {
+				log.Fatalf("Invalid vpcattachment: %v", err)
 			}
 
-			if err := routeingress.Delete(ip, id); err != nil {
+			if err := routeingress.Delete(ip, vpc, vpcAttachment); err != nil {
 				log.Fatalf("routeingress delete failed: %v", err)
 			}
 		},
@@ -70,57 +79,65 @@ func NewCommand() *cobra.Command {
 		Short: "Manage egress routes",
 	}
 	routeEgressAddCmd := &cobra.Command{
-		Use:   "add <id> <prefix> <segments> [proxy]",
+		Use:   "add <vpc> <vpcattachment> <prefix> <segments> [proxy]",
 		Short: "Add an egress route",
-		Args:  cobra.RangeArgs(3, 4),
+		Args:  cobra.RangeArgs(4, 5),
 		Run: func(cmd *cobra.Command, args []string) {
-			id, err := strconv.Atoi(args[0])
+			vpc, err := ToBase62(args[0])
 			if err != nil {
-				log.Fatalf("Invalid id: %v", err)
+				log.Fatalf("Invalid vpc: %v", err)
 			}
-			prefix, err := netlink.ParseIPNet(args[1])
+			vpcAttachment, err := ToBase62(args[1])
+			if err != nil {
+				log.Fatalf("Invalid vpcattachment: %v", err)
+			}
+			prefix, err := netlink.ParseIPNet(args[2])
 			if err != nil {
 				log.Fatalf("Invalid prefix: %v", err)
 			}
-			segments, err := util.ParseSegments(args[2])
+			segments, err := util.ParseSegments(args[3])
 			if err != nil {
 				log.Fatalf("Invalid segments: %v", err)
 			}
 
-			if len(args) == 4 && args[3] == "proxy" {
-				if err := neighborproxy.Add(prefix, id); err != nil {
+			if len(args) == 5 && args[4] == "proxy" {
+				if err := neighborproxy.Add(prefix, vpc, vpcAttachment); err != nil {
 					log.Fatalf("neighborproxy add failed: %v", err)
 				}
 			}
-			if err := routeegress.Add(id, prefix, segments); err != nil {
+			if err := routeegress.Add(vpc, vpcAttachment, prefix, segments); err != nil {
 				log.Fatalf("routeegress add failed: %v", err)
 			}
 		},
 	}
 	routeEgressDelCmd := &cobra.Command{
-		Use:   "del <id> <prefix> <segments> [proxy]",
+		Use:   "del <vpc> <vpcattachment> <prefix> <segments> [proxy]",
 		Short: "Delete an egress route",
-		Args:  cobra.RangeArgs(3, 4),
+		Args:  cobra.RangeArgs(4, 5),
 		Run: func(cmd *cobra.Command, args []string) {
-			id, err := strconv.Atoi(args[0])
+			vpc, err := ToBase62(args[0])
 			if err != nil {
-				log.Fatalf("Invalid id: %v", err)
+				log.Fatalf("Invalid vpc: %v", err)
 			}
-			prefix, err := netlink.ParseIPNet(args[1])
+			vpcAttachment, err := ToBase62(args[1])
+			if err != nil {
+				log.Fatalf("Invalid vpcattachment: %v", err)
+			}
+			prefix, err := netlink.ParseIPNet(args[2])
 			if err != nil {
 				log.Fatalf("Invalid prefix: %v", err)
 			}
-			segments, err := util.ParseSegments(args[2])
+			segments, err := util.ParseSegments(args[3])
 			if err != nil {
 				log.Fatalf("Invalid segments: %v", err)
 			}
 
-			if len(args) == 4 && args[3] == "proxy" {
-				if err := neighborproxy.Delete(prefix, id); err != nil {
+			if len(args) == 5 && args[4] == "proxy" {
+				if err := neighborproxy.Delete(prefix, vpc, vpcAttachment); err != nil {
 					log.Fatalf("neighborproxy delete failed: %v", err)
 				}
 			}
-			if err := routeegress.Delete(id, prefix, segments); err != nil {
+			if err := routeegress.Delete(vpc, vpcAttachment, prefix, segments); err != nil {
 				log.Fatalf("routeegress delete failed: %v", err)
 			}
 		},
@@ -129,4 +146,8 @@ func NewCommand() *cobra.Command {
 	rootCmd.AddCommand(routeEgressCmd)
 
 	return rootCmd
+}
+
+func ToBase62(value string) (string, error) {
+	return baseconv.Convert(strings.ToLower(value), baseconv.DigitsHex, baseconv.Digits62)
 }

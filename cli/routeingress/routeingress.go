@@ -6,12 +6,18 @@ import (
 	"github.com/vishvananda/netlink"
 	"github.com/vishvananda/netlink/nl"
 
+	"github.com/datum-cloud/galactic/cni/vrf"
 	"github.com/datum-cloud/galactic/util"
 )
 
-func Add(ip *net.IPNet, id int) error {
-	dev := util.GenerateInterfaceNameHost(id)
+func Add(ip *net.IPNet, vpc, vpcAttachment string) error {
+	dev := util.GenerateInterfaceNameHost(vpc, vpcAttachment)
 	link, err := netlink.LinkByName(dev)
+	if err != nil {
+		return err
+	}
+
+	vrfId, err := vrf.GetVRFIdForVPC(vpc, vpcAttachment)
 	if err != nil {
 		return err
 	}
@@ -22,7 +28,7 @@ func Add(ip *net.IPNet, id int) error {
 	encap := &netlink.SEG6LocalEncap{
 		Action:   nl.SEG6_LOCAL_ACTION_END_DT46,
 		Flags:    flags,
-		VrfTable: id,
+		VrfTable: int(vrfId),
 	}
 	route := &netlink.Route{
 		Dst:       ip,
@@ -32,8 +38,8 @@ func Add(ip *net.IPNet, id int) error {
 	return netlink.RouteReplace(route)
 }
 
-func Delete(ip *net.IPNet, id int) error {
-	dev := util.GenerateInterfaceNameHost(id)
+func Delete(ip *net.IPNet, vpc, vpcAttachment string) error {
+	dev := util.GenerateInterfaceNameHost(vpc, vpcAttachment)
 	link, err := netlink.LinkByName(dev)
 	if err != nil {
 		return err

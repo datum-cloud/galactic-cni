@@ -15,6 +15,7 @@ require (
 require (
 	github.com/BurntSushi/toml v1.1.0 // indirect
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
+	github.com/kenshaw/baseconv v0.1.1 // indirect
 	github.com/spf13/pflag v1.0.6 // indirect
 	github.com/vishvananda/netns v0.0.5 // indirect
 	golang.org/x/exp/typeparams v0.0.0-20220613132600-b0d781184e0d // indirect

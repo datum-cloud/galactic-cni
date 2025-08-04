@@ -86,28 +86,31 @@ func TestParseSegments(t *testing.T) {
 }
 
 func TestGenerateInterfaceNameVRF(t *testing.T) {
-	id := 42
-	expected := "galactic42-vrf"
-	got := util.GenerateInterfaceNameVRF(id)
+	vpc := "0000000jU"     // 1234 dec
+	vpcattachment := "00G" // 42 dec
+	expected := "G0000000jU00GV"
+	got := util.GenerateInterfaceNameVRF(vpc, vpcattachment)
 	if got != expected {
-		t.Errorf("GenerateInterfaceNameVRF(%d) = %s, want %s", id, got, expected)
+		t.Errorf("GenerateInterfaceNameVRF(%s, %s) = %s, want %s", vpc, vpcattachment, got, expected)
 	}
 }
 
 func TestGenerateInterfaceNameHost(t *testing.T) {
-	id := 42
-	expected := "galactic42-host"
-	got := util.GenerateInterfaceNameHost(id)
+	vpc := "0000000jU"     // 1234 dec
+	vpcattachment := "00G" // 42 dec
+	expected := "G0000000jU00GH"
+	got := util.GenerateInterfaceNameHost(vpc, vpcattachment)
 	if got != expected {
-		t.Errorf("GenerateInterfaceNameHost(%d) = %s, want %s", id, got, expected)
+		t.Errorf("GenerateInterfaceNameHost(%s, %s) = %s, want %s", vpc, vpcattachment, got, expected)
 	}
 }
 
 func TestGenerateInterfaceNameGuest(t *testing.T) {
-	id := 42
-	expected := "galactic42-guest"
-	got := util.GenerateInterfaceNameGuest(id)
+	vpc := "0000000jU"     // 1234 dec
+	vpcattachment := "00G" // 42 dec
+	expected := "G0000000jU00GG"
+	got := util.GenerateInterfaceNameGuest(vpc, vpcattachment)
 	if got != expected {
-		t.Errorf("GenerateInterfaceNameGuest(%d) = %s, want %s", id, got, expected)
+		t.Errorf("GenerateInterfaceNameGuest(%s, %s) = %s, want %s", vpc, vpcattachment, got, expected)
 	}
 }

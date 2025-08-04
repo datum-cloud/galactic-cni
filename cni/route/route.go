@@ -7,10 +7,11 @@ import (
 
 	"github.com/vishvananda/netlink"
 
+	"github.com/datum-cloud/galactic/cni/vrf"
 	gutil "github.com/datum-cloud/galactic/util"
 )
 
-func assembleRoute(id int, prefix, nextHop, dev string) (*netlink.Route, error) {
+func assembleRoute(vrfId uint32, prefix, nextHop, dev string) (*netlink.Route, error) {
 	_, routeDst, err := net.ParseCIDR(prefix)
 	if err != nil {
 		return nil, err
@@ -24,7 +25,7 @@ func assembleRoute(id int, prefix, nextHop, dev string) (*netlink.Route, error) 
 		return &netlink.Route{
 			Dst:   routeDst,
 			Gw:    routeGw,
-			Table: id,
+			Table: int(vrfId),
 		}, nil
 	}
 
@@ -34,22 +35,30 @@ func assembleRoute(id int, prefix, nextHop, dev string) (*netlink.Route, error) 
 	}
 	return &netlink.Route{
 		Dst:       routeDst,
-		Table:     id,
+		Table:     int(vrfId),
 		LinkIndex: link.Attrs().Index,
 		Scope:     unix.RT_SCOPE_LINK,
 	}, nil
 }
 
-func Add(id int, prefix, nextHop, dev string) error {
-	route, err := assembleRoute(id, prefix, nextHop, dev)
+func Add(vpc, vpcAttachment string, prefix, nextHop, dev string) error {
+	vrfId, err := vrf.GetVRFIdForVPC(vpc, vpcAttachment)
+	if err != nil {
+		return err
+	}
+	route, err := assembleRoute(vrfId, prefix, nextHop, dev)
 	if err != nil {
 		return err
 	}
 	return netlink.RouteAdd(route)
 }
 
-func Delete(id int, prefix, nextHop, dev string) error {
-	route, err := assembleRoute(id, prefix, nextHop, dev)
+func Delete(vpc, vpcAttachment string, prefix, nextHop, dev string) error {
+	vrfId, err := vrf.GetVRFIdForVPC(vpc, vpcAttachment)
+	if err != nil {
+		return err
+	}
+	route, err := assembleRoute(vrfId, prefix, nextHop, dev)
 	if err != nil {
 		return err
 	}
