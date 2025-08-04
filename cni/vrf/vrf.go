@@ -48,17 +48,30 @@ func Delete(id int) error {
 	return netlink.LinkDel(link)
 }
 
-func FindNextAvailableVRFId() (uint32, error) {
+func ListVRFLinks() ([]*netlink.Vrf, error) {
 	links, err := netlink.LinkList()
+	if err != nil {
+		return nil, err
+	}
+
+	vrfLinks := make([]*netlink.Vrf, 0, len(links))
+	for _, link := range links {
+		if vrf, ok := link.(*netlink.Vrf); ok {
+			vrfLinks = append(vrfLinks, vrf)
+		}
+	}
+	return vrfLinks, nil
+}
+
+func FindNextAvailableVRFId() (uint32, error) {
+	vrfs, err := ListVRFLinks()
 	if err != nil {
 		return 0, err
 	}
 
-	used := make([]uint32, 0, len(links))
-	for _, link := range links {
-		if vrf, ok := link.(*netlink.Vrf); ok {
-			used = append(used, vrf.Table)
-		}
+	used := make([]uint32, 0, len(vrfs))
+	for _, vrf := range vrfs {
+		used = append(used, vrf.Table)
 	}
 
 	for vrfId := MinVRFId; vrfId <= MaxVRFId; vrfId++ {
@@ -68,4 +81,18 @@ func FindNextAvailableVRFId() (uint32, error) {
 	}
 
 	return 0, fmt.Errorf("could not find any available VRF id")
+}
+
+func GetVRFIdForInterface(name string) (uint32, error) {
+	vrfs, err := ListVRFLinks()
+	if err != nil {
+		return 0, err
+	}
+
+	for _, vrf := range vrfs {
+		if vrf.Name == name {
+			return vrf.Table, nil
+		}
+	}
+	return 0, fmt.Errorf("could not find VRF ID for interface: %s", name)
 }
