@@ -94,21 +94,27 @@ func NewCommand() *cobra.Command {
 		Short: "Manage egress routes",
 	}
 	routeEgressAddCmd := &cobra.Command{
-		Use:   "add <prefix> <segments>",
+		Use:   "add <prefix> <src> <segments>",
 		Short: "Add an egress route",
-		Args:  cobra.ExactArgs(2),
+		Args:  cobra.ExactArgs(3),
 		Run: func(cmd *cobra.Command, args []string) {
 			prefix, err := netlink.ParseIPNet(args[0])
 			if err != nil {
 				log.Fatalf("Invalid prefix: %v", err)
 			}
-			segments, err := util.ParseSegments(args[1])
+			src, err := netlink.ParseIPNet(args[1])
+			if err != nil {
+				log.Fatalf("Invalid src: %v", err)
+			}
+			if !IsHost(src) {
+				log.Fatalf("src is not a host route")
+			}
+			segments, err := util.ParseSegments(args[2])
 			if err != nil {
 				log.Fatalf("Invalid segments: %v", err)
 			}
 
-			endpoint := segments[len(segments)-1]
-			vpc, vpcAttachment, err := util.ExtractVPCFromSRv6Endpoint(endpoint)
+			vpc, vpcAttachment, err := util.ExtractVPCFromSRv6Endpoint(src.IP)
 			if err != nil {
 				log.Fatalf("could not extract SRv6 endpoint: %v", err)
 			}
@@ -132,21 +138,27 @@ func NewCommand() *cobra.Command {
 		},
 	}
 	routeEgressDelCmd := &cobra.Command{
-		Use:   "del <prefix> <segments>",
+		Use:   "del <prefix> <src> <segments>",
 		Short: "Delete an egress route",
-		Args:  cobra.ExactArgs(2),
+		Args:  cobra.ExactArgs(3),
 		Run: func(cmd *cobra.Command, args []string) {
 			prefix, err := netlink.ParseIPNet(args[0])
 			if err != nil {
 				log.Fatalf("Invalid prefix: %v", err)
 			}
-			segments, err := util.ParseSegments(args[1])
+			src, err := netlink.ParseIPNet(args[1])
+			if err != nil {
+				log.Fatalf("Invalid src: %v", err)
+			}
+			if !IsHost(src) {
+				log.Fatalf("src is not a host route")
+			}
+			segments, err := util.ParseSegments(args[2])
 			if err != nil {
 				log.Fatalf("Invalid segments: %v", err)
 			}
 
-			endpoint := segments[len(segments)-1]
-			vpc, vpcAttachment, err := util.ExtractVPCFromSRv6Endpoint(endpoint)
+			vpc, vpcAttachment, err := util.ExtractVPCFromSRv6Endpoint(src.IP)
 			if err != nil {
 				log.Fatalf("could not extract SRv6 endpoint: %v", err)
 			}
