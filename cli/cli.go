@@ -27,9 +27,9 @@ func NewCommand() *cobra.Command {
 		Short: "Manage ingress routes",
 	}
 	routeIngressAddCmd := &cobra.Command{
-		Use:   "add <ip> <vpc> <vpcattachment>",
+		Use:   "add <ip>",
 		Short: "Add an ingress route",
-		Args:  cobra.ExactArgs(3),
+		Args:  cobra.ExactArgs(1),
 		Run: func(cmd *cobra.Command, args []string) {
 			ip, err := netlink.ParseIPNet(args[0])
 			if err != nil {
@@ -38,11 +38,15 @@ func NewCommand() *cobra.Command {
 			if !IsHost(ip) {
 				log.Fatalf("ip is not a host route")
 			}
-			vpc, err := ToBase62(args[1])
+			vpc, vpcAttachment, err := util.ExtractVPCFromSRv6Endpoint(ip.IP)
+			if err != nil {
+				log.Fatalf("could not extract SRv6 endpoint: %v", err)
+			}
+			vpc, err = ToBase62(vpc)
 			if err != nil {
 				log.Fatalf("Invalid vpc: %v", err)
 			}
-			vpcAttachment, err := ToBase62(args[2])
+			vpcAttachment, err = ToBase62(vpcAttachment)
 			if err != nil {
 				log.Fatalf("Invalid vpcattachment: %v", err)
 			}
@@ -53,9 +57,9 @@ func NewCommand() *cobra.Command {
 		},
 	}
 	routeIngressDelCmd := &cobra.Command{
-		Use:   "del <ip> <vpc> <vpcattachment>",
+		Use:   "del <ip>",
 		Short: "Delete an ingress route",
-		Args:  cobra.ExactArgs(3),
+		Args:  cobra.ExactArgs(1),
 		Run: func(cmd *cobra.Command, args []string) {
 			ip, err := netlink.ParseIPNet(args[0])
 			if err != nil {
@@ -64,11 +68,15 @@ func NewCommand() *cobra.Command {
 			if !IsHost(ip) {
 				log.Fatalf("ip is not a host route")
 			}
-			vpc, err := ToBase62(args[1])
+			vpc, vpcAttachment, err := util.ExtractVPCFromSRv6Endpoint(ip.IP)
+			if err != nil {
+				log.Fatalf("could not extract SRv6 endpoint: %v", err)
+			}
+			vpc, err = ToBase62(vpc)
 			if err != nil {
 				log.Fatalf("Invalid vpc: %v", err)
 			}
-			vpcAttachment, err := ToBase62(args[2])
+			vpcAttachment, err = ToBase62(vpcAttachment)
 			if err != nil {
 				log.Fatalf("Invalid vpcattachment: %v", err)
 			}
@@ -86,25 +94,31 @@ func NewCommand() *cobra.Command {
 		Short: "Manage egress routes",
 	}
 	routeEgressAddCmd := &cobra.Command{
-		Use:   "add <vpc> <vpcattachment> <prefix> <segments>",
+		Use:   "add <prefix> <segments>",
 		Short: "Add an egress route",
-		Args:  cobra.ExactArgs(4),
+		Args:  cobra.ExactArgs(2),
 		Run: func(cmd *cobra.Command, args []string) {
-			vpc, err := ToBase62(args[0])
-			if err != nil {
-				log.Fatalf("Invalid vpc: %v", err)
-			}
-			vpcAttachment, err := ToBase62(args[1])
-			if err != nil {
-				log.Fatalf("Invalid vpcattachment: %v", err)
-			}
-			prefix, err := netlink.ParseIPNet(args[2])
+			prefix, err := netlink.ParseIPNet(args[0])
 			if err != nil {
 				log.Fatalf("Invalid prefix: %v", err)
 			}
-			segments, err := util.ParseSegments(args[3])
+			segments, err := util.ParseSegments(args[1])
 			if err != nil {
 				log.Fatalf("Invalid segments: %v", err)
+			}
+
+			endpoint := segments[len(segments)-1]
+			vpc, vpcAttachment, err := util.ExtractVPCFromSRv6Endpoint(endpoint)
+			if err != nil {
+				log.Fatalf("could not extract SRv6 endpoint: %v", err)
+			}
+			vpc, err = ToBase62(vpc)
+			if err != nil {
+				log.Fatalf("Invalid vpc: %v", err)
+			}
+			vpcAttachment, err = ToBase62(vpcAttachment)
+			if err != nil {
+				log.Fatalf("Invalid vpcattachment: %v", err)
 			}
 
 			if IsHost(prefix) {
@@ -118,25 +132,31 @@ func NewCommand() *cobra.Command {
 		},
 	}
 	routeEgressDelCmd := &cobra.Command{
-		Use:   "del <vpc> <vpcattachment> <prefix> <segments>",
+		Use:   "del <prefix> <segments>",
 		Short: "Delete an egress route",
-		Args:  cobra.ExactArgs(4),
+		Args:  cobra.ExactArgs(2),
 		Run: func(cmd *cobra.Command, args []string) {
-			vpc, err := ToBase62(args[0])
-			if err != nil {
-				log.Fatalf("Invalid vpc: %v", err)
-			}
-			vpcAttachment, err := ToBase62(args[1])
-			if err != nil {
-				log.Fatalf("Invalid vpcattachment: %v", err)
-			}
-			prefix, err := netlink.ParseIPNet(args[2])
+			prefix, err := netlink.ParseIPNet(args[0])
 			if err != nil {
 				log.Fatalf("Invalid prefix: %v", err)
 			}
-			segments, err := util.ParseSegments(args[3])
+			segments, err := util.ParseSegments(args[1])
 			if err != nil {
 				log.Fatalf("Invalid segments: %v", err)
+			}
+
+			endpoint := segments[len(segments)-1]
+			vpc, vpcAttachment, err := util.ExtractVPCFromSRv6Endpoint(endpoint)
+			if err != nil {
+				log.Fatalf("could not extract SRv6 endpoint: %v", err)
+			}
+			vpc, err = ToBase62(vpc)
+			if err != nil {
+				log.Fatalf("Invalid vpc: %v", err)
+			}
+			vpcAttachment, err = ToBase62(vpcAttachment)
+			if err != nil {
+				log.Fatalf("Invalid vpcattachment: %v", err)
 			}
 
 			if IsHost(prefix) {
