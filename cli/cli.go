@@ -2,6 +2,7 @@ package cli
 
 import (
 	"log"
+	"net"
 	"strings"
 
 	"github.com/spf13/cobra"
@@ -79,9 +80,9 @@ func NewCommand() *cobra.Command {
 		Short: "Manage egress routes",
 	}
 	routeEgressAddCmd := &cobra.Command{
-		Use:   "add <vpc> <vpcattachment> <prefix> <segments> [proxy]",
+		Use:   "add <vpc> <vpcattachment> <prefix> <segments>",
 		Short: "Add an egress route",
-		Args:  cobra.RangeArgs(4, 5),
+		Args:  cobra.ExactArgs(4),
 		Run: func(cmd *cobra.Command, args []string) {
 			vpc, err := ToBase62(args[0])
 			if err != nil {
@@ -100,7 +101,7 @@ func NewCommand() *cobra.Command {
 				log.Fatalf("Invalid segments: %v", err)
 			}
 
-			if len(args) == 5 && args[4] == "proxy" {
+			if IsHost(prefix) {
 				if err := neighborproxy.Add(prefix, vpc, vpcAttachment); err != nil {
 					log.Fatalf("neighborproxy add failed: %v", err)
 				}
@@ -111,9 +112,9 @@ func NewCommand() *cobra.Command {
 		},
 	}
 	routeEgressDelCmd := &cobra.Command{
-		Use:   "del <vpc> <vpcattachment> <prefix> <segments> [proxy]",
+		Use:   "del <vpc> <vpcattachment> <prefix> <segments>",
 		Short: "Delete an egress route",
-		Args:  cobra.RangeArgs(4, 5),
+		Args:  cobra.ExactArgs(4),
 		Run: func(cmd *cobra.Command, args []string) {
 			vpc, err := ToBase62(args[0])
 			if err != nil {
@@ -132,7 +133,7 @@ func NewCommand() *cobra.Command {
 				log.Fatalf("Invalid segments: %v", err)
 			}
 
-			if len(args) == 5 && args[4] == "proxy" {
+			if IsHost(prefix) {
 				if err := neighborproxy.Delete(prefix, vpc, vpcAttachment); err != nil {
 					log.Fatalf("neighborproxy delete failed: %v", err)
 				}
@@ -150,4 +151,10 @@ func NewCommand() *cobra.Command {
 
 func ToBase62(value string) (string, error) {
 	return baseconv.Convert(strings.ToLower(value), baseconv.DigitsHex, baseconv.Digits62)
+}
+
+func IsHost(ipNet *net.IPNet) bool {
+	ones, bits := ipNet.Mask.Size()
+	// host if mask is full length: /32 for IPv4, /128 for IPv6
+	return ones == bits
 }
