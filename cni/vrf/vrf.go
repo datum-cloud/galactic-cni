@@ -13,8 +13,8 @@ import (
 const MinVRFId = uint32(1)
 const MaxVRFId = uint32(math.MaxUint32 - 1)
 
-func Add(id int) error {
-	name := util.GenerateInterfaceNameVRF(id)
+func Add(vpc, vpcAttachment string) error {
+	name := util.GenerateInterfaceNameVRF(vpc, vpcAttachment)
 
 	vrfId, err := FindNextAvailableVRFId()
 	if err != nil {
@@ -39,8 +39,8 @@ func Add(id int) error {
 	return netlink.LinkSetUp(vrf)
 }
 
-func Delete(id int) error {
-	link, err := netlink.LinkByName(util.GenerateInterfaceNameVRF(id))
+func Delete(vpc, vpcAttachment string) error {
+	link, err := netlink.LinkByName(util.GenerateInterfaceNameVRF(vpc, vpcAttachment))
 	if err != nil {
 		return err
 	}
@@ -95,4 +95,8 @@ func GetVRFIdForInterface(name string) (uint32, error) {
 		}
 	}
 	return 0, fmt.Errorf("could not find VRF ID for interface: %s", name)
+}
+
+func GetVRFIdForVPC(vpc, vpcAttachment string) (uint32, error) {
+	return GetVRFIdForInterface(util.GenerateInterfaceNameVRF(vpc, vpcAttachment))
 }

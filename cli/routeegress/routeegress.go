@@ -5,12 +5,19 @@ import (
 
 	"github.com/vishvananda/netlink"
 	"github.com/vishvananda/netlink/nl"
+
+	"github.com/datum-cloud/galactic/cni/vrf"
 )
 
 const LoopbackDevice = "lo-galactic"
 
-func Add(id int, prefix *net.IPNet, segments []net.IP) error {
+func Add(vpc, vpcAttachment string, prefix *net.IPNet, segments []net.IP) error {
 	link, err := netlink.LinkByName(LoopbackDevice)
+	if err != nil {
+		return err
+	}
+
+	vrfId, err := vrf.GetVRFIdForVPC(vpc, vpcAttachment)
 	if err != nil {
 		return err
 	}
@@ -21,22 +28,27 @@ func Add(id int, prefix *net.IPNet, segments []net.IP) error {
 	}
 	route := &netlink.Route{
 		Dst:       prefix,
-		Table:     id,
+		Table:     int(vrfId),
 		LinkIndex: link.Attrs().Index,
 		Encap:     encap,
 	}
 	return netlink.RouteReplace(route)
 }
 
-func Delete(id int, prefix *net.IPNet, segments []net.IP) error {
+func Delete(vpc, vpcAttachment string, prefix *net.IPNet, segments []net.IP) error {
 	link, err := netlink.LinkByName(LoopbackDevice)
+	if err != nil {
+		return err
+	}
+
+	vrfId, err := vrf.GetVRFIdForVPC(vpc, vpcAttachment)
 	if err != nil {
 		return err
 	}
 
 	route := &netlink.Route{
 		Dst:       prefix,
-		Table:     id,
+		Table:     int(vrfId),
 		LinkIndex: link.Attrs().Index,
 	}
 	return netlink.RouteDel(route)

@@ -6,7 +6,7 @@ import (
 	"strings"
 )
 
-const InterfaceNameTemplate = "galactic%d-%s"
+const InterfaceNameTemplate = "G%09s%03s%s"
 
 func ParseIP(ip string) (net.IP, error) {
 	parsed := net.ParseIP(ip)
@@ -35,14 +35,14 @@ func ParseSegments(input string) ([]net.IP, error) {
 	return segments, nil
 }
 
-func GenerateInterfaceNameVRF(id int) string {
-	return fmt.Sprintf(InterfaceNameTemplate, id, "vrf")
+func GenerateInterfaceNameVRF(vpc, vpcAttachment string) string {
+	return fmt.Sprintf(InterfaceNameTemplate, vpc, vpcAttachment, "V")
 }
 
-func GenerateInterfaceNameHost(id int) string {
-	return fmt.Sprintf(InterfaceNameTemplate, id, "host")
+func GenerateInterfaceNameHost(vpc, vpcAttachment string) string {
+	return fmt.Sprintf(InterfaceNameTemplate, vpc, vpcAttachment, "H")
 }
 
-func GenerateInterfaceNameGuest(id int) string {
-	return fmt.Sprintf(InterfaceNameTemplate, id, "guest")
+func GenerateInterfaceNameGuest(vpc, vpcAttachment string) string {
+	return fmt.Sprintf(InterfaceNameTemplate, vpc, vpcAttachment, "G")
 }

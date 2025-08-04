@@ -8,8 +8,8 @@ import (
 	"github.com/datum-cloud/galactic/util"
 )
 
-func Add(ipnet *net.IPNet, id int) error {
-	dev := util.GenerateInterfaceNameHost(id)
+func Add(ipnet *net.IPNet, vpc, vpcAttachment string) error {
+	dev := util.GenerateInterfaceNameHost(vpc, vpcAttachment)
 	link, err := netlink.LinkByName(dev)
 	if err != nil {
 		return err
@@ -25,8 +25,8 @@ func Add(ipnet *net.IPNet, id int) error {
 	return netlink.NeighAdd(neigh)
 }
 
-func Delete(ipnet *net.IPNet, id int) error {
-	dev := util.GenerateInterfaceNameHost(id)
+func Delete(ipnet *net.IPNet, vpc, vpcAttachment string) error {
+	dev := util.GenerateInterfaceNameHost(vpc, vpcAttachment)
 	link, err := netlink.LinkByName(dev)
 	if err != nil {
 		return err

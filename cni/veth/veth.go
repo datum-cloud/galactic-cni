@@ -36,10 +36,10 @@ func updateForwardRule(interfaceName string, action string) error {
 	return nil
 }
 
-func Add(id, mtu int) error {
-	vrfName := util.GenerateInterfaceNameVRF(id)
-	hostName := util.GenerateInterfaceNameHost(id)
-	guestName := util.GenerateInterfaceNameGuest(id)
+func Add(vpc, vpcAttachment string, mtu int) error {
+	vrfName := util.GenerateInterfaceNameVRF(vpc, vpcAttachment)
+	hostName := util.GenerateInterfaceNameHost(vpc, vpcAttachment)
+	guestName := util.GenerateInterfaceNameGuest(vpc, vpcAttachment)
 
 	veth := &netlink.Veth{
 		LinkAttrs: netlink.LinkAttrs{
@@ -84,8 +84,8 @@ func Add(id, mtu int) error {
 	return netlink.LinkSetMaster(hostLink, vrfLink)
 }
 
-func Delete(id, mtu int) error {
-	hostName := util.GenerateInterfaceNameHost(id)
+func Delete(vpc, vpcAttachment string, mtu int) error {
+	hostName := util.GenerateInterfaceNameHost(vpc, vpcAttachment)
 
 	if err := updateForwardRule(hostName, "delete"); err != nil {
 		return err
