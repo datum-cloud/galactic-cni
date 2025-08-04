@@ -114,3 +114,13 @@ func TestGenerateInterfaceNameGuest(t *testing.T) {
 		t.Errorf("GenerateInterfaceNameGuest(%s, %s) = %s, want %s", vpc, vpcattachment, got, expected)
 	}
 }
+
+func TestExtractVPCFromSRv6Endpoint(t *testing.T) {
+	srv6Endpoint := "2607:ed40:ff00::0000:0000:04d2:002a"
+	vpc := "0000000004d2"
+	vpcAttachment := "002a"
+	gotVpc, gotVpcAttachment, _ := util.ExtractVPCFromSRv6Endpoint(net.ParseIP(srv6Endpoint))
+	if gotVpc != vpc || gotVpcAttachment != vpcAttachment {
+		t.Errorf("ExtractVPCFromSRv6Endpoint(%s) = %s, %s, want %s, %s", srv6Endpoint, gotVpc, gotVpcAttachment, vpc, vpcAttachment)
+	}
+}

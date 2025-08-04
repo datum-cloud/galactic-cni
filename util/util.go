@@ -2,6 +2,7 @@ package util
 
 import (
 	"fmt"
+	"math/big"
 	"net"
 	"strings"
 )
@@ -45,4 +46,22 @@ func GenerateInterfaceNameHost(vpc, vpcAttachment string) string {
 
 func GenerateInterfaceNameGuest(vpc, vpcAttachment string) string {
 	return fmt.Sprintf(InterfaceNameTemplate, vpc, vpcAttachment, "G")
+}
+
+func ExtractVPCFromSRv6Endpoint(endpoint net.IP) (string, string, error) {
+	if endpoint.To4() != nil {
+		return "", "", fmt.Errorf("provided endpoint is not an IPv6 address: %s", endpoint)
+	}
+
+	endpointNum := new(big.Int).SetBytes(endpoint)
+	vpcNum := new(big.Int).And(
+		new(big.Int).Rsh(endpointNum, 16), // drop the vpcattachment bits
+		big.NewInt(0xFFFFFFFFFFFF),        // mask the vpc bits
+	)
+	vpcAttachmentNum := new(big.Int).And(
+		endpointNum,
+		big.NewInt(0xFFFF), // mask the vpcattachment bits
+	)
+
+	return fmt.Sprintf("%012x", vpcNum), fmt.Sprintf("%04x", vpcAttachmentNum), nil
 }
