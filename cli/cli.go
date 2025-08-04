@@ -35,6 +35,9 @@ func NewCommand() *cobra.Command {
 			if err != nil {
 				log.Fatalf("Invalid ip: %v", err)
 			}
+			if !IsHost(ip) {
+				log.Fatalf("ip is not a host route")
+			}
 			vpc, err := ToBase62(args[1])
 			if err != nil {
 				log.Fatalf("Invalid vpc: %v", err)
@@ -57,6 +60,9 @@ func NewCommand() *cobra.Command {
 			ip, err := netlink.ParseIPNet(args[0])
 			if err != nil {
 				log.Fatalf("Invalid ip: %v", err)
+			}
+			if !IsHost(ip) {
+				log.Fatalf("ip is not a host route")
 			}
 			vpc, err := ToBase62(args[1])
 			if err != nil {
