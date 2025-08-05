@@ -27,7 +27,6 @@ type PluginConf struct {
 	types.PluginConf
 	VPC           string        `json:"vpc"`
 	VPCAttachment string        `json:"vpcattachment"`
-	Id            int           `json:"id"`
 	MTU           int           `json:"mtu,omitempty"`
 	Terminations  []Termination `json:"terminations,omitempty"`
 }
