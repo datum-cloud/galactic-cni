@@ -13,3 +13,6 @@ User command-line interface for debugging and troubleshooting.
 
 ## galactic-cni
 Kubernetes CNI plugin.
+
+### Requirements
+* `host-device` CNI plugin
