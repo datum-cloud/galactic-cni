@@ -187,20 +187,8 @@ func cmdDel(args *skel.CmdArgs) error {
 
 type HostDevicePluginConf struct {
 	types.PluginConf
-	Device string          `json:"device"`
-	IPAM   json.RawMessage `json:"ipam,omitempty"`
-}
-
-func getIPAM(input []byte) json.RawMessage {
-	var m map[string]json.RawMessage
-	if err := json.Unmarshal(input, &m); err != nil {
-		return nil
-	}
-	ipam, ok := m["ipam"]
-	if !ok {
-		return nil
-	}
-	return ipam
+	Device string `json:"device"`
+	IPAM   IPAM   `json:"ipam,omitempty"`
 }
 
 func hostDeviceExecutable() string {
@@ -217,7 +205,7 @@ func hostDevice(command string, skelArgs *skel.CmdArgs, pluginConf *PluginConf) 
 			Type:       "host-device",
 		},
 		Device: util.GenerateInterfaceNameGuest(pluginConf.VPC, pluginConf.VPCAttachment),
-		IPAM:   getIPAM(skelArgs.StdinData),
+		IPAM:   pluginConf.IPAM,
 	})
 	if err != nil {
 		return err
