@@ -14,6 +14,7 @@ require (
 
 require (
 	github.com/BurntSushi/toml v1.1.0 // indirect
+	github.com/datum-cloud/galactic-agent v0.0.0-20250812012406-0722af92488d // indirect
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
 	github.com/kenshaw/baseconv v0.1.1 // indirect
 	github.com/spf13/pflag v1.0.6 // indirect
@@ -21,7 +22,12 @@ require (
 	golang.org/x/exp/typeparams v0.0.0-20220613132600-b0d781184e0d // indirect
 	golang.org/x/lint v0.0.0-20210508222113-6edffad5e616 // indirect
 	golang.org/x/mod v0.24.0 // indirect
-	golang.org/x/sync v0.12.0 // indirect
+	golang.org/x/net v0.40.0 // indirect
+	golang.org/x/sync v0.14.0 // indirect
+	golang.org/x/text v0.25.0 // indirect
 	golang.org/x/tools v0.31.0 // indirect
+	google.golang.org/genproto/googleapis/rpc v0.0.0-20250528174236-200df99c418a // indirect
+	google.golang.org/grpc v1.74.2 // indirect
+	google.golang.org/protobuf v1.36.6 // indirect
 	honnef.co/go/tools v0.3.2 // indirect
 )
