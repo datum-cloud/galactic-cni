@@ -4,10 +4,13 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"net"
 	"os"
 	"path/filepath"
 
 	"github.com/spf13/cobra"
+
+	"github.com/kenshaw/baseconv"
 
 	"github.com/containernetworking/cni/pkg/invoke"
 	"github.com/containernetworking/cni/pkg/skel"
@@ -15,6 +18,7 @@ import (
 	type100 "github.com/containernetworking/cni/pkg/types/100"
 	"github.com/containernetworking/cni/pkg/version"
 
+	"github.com/datum-cloud/galactic/cni/registration"
 	"github.com/datum-cloud/galactic/cni/route"
 	"github.com/datum-cloud/galactic/cni/veth"
 	"github.com/datum-cloud/galactic/cni/vrf"
@@ -27,12 +31,28 @@ type Termination struct {
 	Via     string `json:"via,omitempty"`
 }
 
+type IPAM struct {
+	Type      string    `json:"type"`
+	Routes    []Route   `json:"routes,omitempty"`
+	Addresses []Address `json:"addresses,omitempty"`
+}
+
+type Route struct {
+	Dst string `json:"dst"`
+	GW  string `json:"gw,omitempty"`
+}
+
+type Address struct {
+	Address string `json:"address"`
+}
+
 type PluginConf struct {
 	types.PluginConf
 	VPC           string        `json:"vpc"`
 	VPCAttachment string        `json:"vpcattachment"`
 	MTU           int           `json:"mtu,omitempty"`
 	Terminations  []Termination `json:"terminations,omitempty"`
+	IPAM          IPAM          `json:"ipam,omitempty"`
 }
 
 func NewCommand() *cobra.Command {
@@ -60,6 +80,37 @@ func parseConf(data []byte) (*PluginConf, error) {
 	return conf, nil
 }
 
+func Base62ToHex(value string) (string, error) {
+	return baseconv.Convert(value, baseconv.Digits62, baseconv.DigitsHex)
+}
+
+func getNetworks(pluginConf *PluginConf) ([]string, error) {
+	addresses := pluginConf.IPAM.Addresses
+	terminations := pluginConf.Terminations
+
+	networks := make([]string, 0, len(addresses)+len(terminations))
+
+	for _, a := range addresses {
+		ip, _, err := net.ParseCIDR(a.Address)
+		if err != nil {
+			return nil, err
+		}
+		if ip.To4() != nil {
+			networks = append(networks, fmt.Sprintf("%s/32", ip.String()))
+		} else {
+			networks = append(networks, fmt.Sprintf("%s/128", ip.String()))
+		}
+	}
+
+	for _, t := range terminations {
+		if t.Via != "" {
+			networks = append(networks, t.Network)
+		}
+	}
+
+	return networks, nil
+}
+
 func cmdAdd(args *skel.CmdArgs) error {
 	pluginConf, _ := parseConf(args.StdinData)
 	if err := vrf.Add(pluginConf.VPC, pluginConf.VPCAttachment); err != nil {
@@ -75,6 +126,22 @@ func cmdAdd(args *skel.CmdArgs) error {
 		}
 	}
 	if err := hostDevice("ADD", args, pluginConf); err != nil {
+		return err
+	}
+	vpcHex, err := Base62ToHex(pluginConf.VPC)
+	if err != nil {
+		return err
+	}
+	vpcAttachmentHex, err := Base62ToHex(pluginConf.VPCAttachment)
+	if err != nil {
+		return err
+	}
+	networks, err := getNetworks(pluginConf)
+	if err != nil {
+		return err
+	}
+	err = registration.Register(vpcHex, vpcAttachmentHex, networks)
+	if err != nil {
 		return err
 	}
 	result := &type100.Result{}
@@ -96,6 +163,22 @@ func cmdDel(args *skel.CmdArgs) error {
 		return err
 	}
 	if err := vrf.Delete(pluginConf.VPC, pluginConf.VPCAttachment); err != nil {
+		return err
+	}
+	vpcHex, err := Base62ToHex(pluginConf.VPC)
+	if err != nil {
+		return err
+	}
+	vpcAttachmentHex, err := Base62ToHex(pluginConf.VPCAttachment)
+	if err != nil {
+		return err
+	}
+	networks, err := getNetworks(pluginConf)
+	if err != nil {
+		return err
+	}
+	err = registration.Deregister(vpcHex, vpcAttachmentHex, networks)
+	if err != nil {
 		return err
 	}
 	result := &type100.Result{}
