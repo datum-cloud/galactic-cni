@@ -150,21 +150,6 @@ func cmdAdd(args *skel.CmdArgs) error {
 
 func cmdDel(args *skel.CmdArgs) error {
 	pluginConf, _ := parseConf(args.StdinData)
-	dev := util.GenerateInterfaceNameHost(pluginConf.VPC, pluginConf.VPCAttachment)
-	if err := hostDevice("DEL", args, pluginConf); err != nil {
-		return err
-	}
-	for _, termination := range pluginConf.Terminations {
-		if err := route.Delete(pluginConf.VPC, pluginConf.VPCAttachment, termination.Network, termination.Via, dev); err != nil {
-			return err
-		}
-	}
-	if err := veth.Delete(pluginConf.VPC, pluginConf.VPCAttachment, pluginConf.MTU); err != nil {
-		return err
-	}
-	if err := vrf.Delete(pluginConf.VPC, pluginConf.VPCAttachment); err != nil {
-		return err
-	}
 	vpcHex, err := Base62ToHex(pluginConf.VPC)
 	if err != nil {
 		return err
@@ -179,6 +164,21 @@ func cmdDel(args *skel.CmdArgs) error {
 	}
 	err = registration.Deregister(vpcHex, vpcAttachmentHex, networks)
 	if err != nil {
+		return err
+	}
+	dev := util.GenerateInterfaceNameHost(pluginConf.VPC, pluginConf.VPCAttachment)
+	if err := hostDevice("DEL", args, pluginConf); err != nil {
+		return err
+	}
+	for _, termination := range pluginConf.Terminations {
+		if err := route.Delete(pluginConf.VPC, pluginConf.VPCAttachment, termination.Network, termination.Via, dev); err != nil {
+			return err
+		}
+	}
+	if err := veth.Delete(pluginConf.VPC, pluginConf.VPCAttachment, pluginConf.MTU); err != nil {
+		return err
+	}
+	if err := vrf.Delete(pluginConf.VPC, pluginConf.VPCAttachment); err != nil {
 		return err
 	}
 	result := &type100.Result{}
