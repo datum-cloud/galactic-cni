@@ -21,6 +21,10 @@ func Add(vpc, vpcAttachment string) error {
 		return err
 	}
 
+	if err := Flush(vrfId); err != nil {
+		return err
+	}
+
 	vrf := &netlink.Vrf{
 		LinkAttrs: netlink.LinkAttrs{
 			Name: name,
@@ -40,12 +44,42 @@ func Add(vpc, vpcAttachment string) error {
 }
 
 func Delete(vpc, vpcAttachment string) error {
-	link, err := netlink.LinkByName(util.GenerateInterfaceNameVRF(vpc, vpcAttachment))
+	name := util.GenerateInterfaceNameVRF(vpc, vpcAttachment)
+
+	vrfId, err := GetVRFIdForInterface(name)
+	if err != nil {
+		return err
+	}
+
+	if err := Flush(vrfId); err != nil {
+		return err
+	}
+
+	link, err := netlink.LinkByName(name)
 	if err != nil {
 		return err
 	}
 
 	return netlink.LinkDel(link)
+}
+
+func Flush(vrfId uint32) error {
+	for _, family := range []int{netlink.FAMILY_V4, netlink.FAMILY_V6} {
+		routes, err := netlink.RouteListFiltered(
+			family,
+			&netlink.Route{Table: int(vrfId)},
+			netlink.RT_FILTER_TABLE,
+		)
+		if err != nil {
+			return err
+		}
+		for _, route := range routes {
+			if err := netlink.RouteDel(&route); err != nil {
+				return err
+			}
+		}
+	}
+	return nil
 }
 
 func ListVRFLinks() ([]*netlink.Vrf, error) {
