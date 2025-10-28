@@ -1,4 +1,4 @@
-module github.com/datum-cloud/galactic
+module github.com/datum-cloud/galactic-cni
 
 go 1.24
 

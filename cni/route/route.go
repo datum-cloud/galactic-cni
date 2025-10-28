@@ -7,8 +7,8 @@ import (
 
 	"github.com/vishvananda/netlink"
 
-	"github.com/datum-cloud/galactic/cni/vrf"
-	gutil "github.com/datum-cloud/galactic/util"
+	"github.com/datum-cloud/galactic-cni/cni/vrf"
+	gutil "github.com/datum-cloud/galactic-cni/util"
 )
 
 func assembleRoute(vrfId uint32, prefix, nextHop, dev string) (*netlink.Route, error) {

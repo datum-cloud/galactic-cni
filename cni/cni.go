@@ -18,12 +18,12 @@ import (
 	type100 "github.com/containernetworking/cni/pkg/types/100"
 	"github.com/containernetworking/cni/pkg/version"
 
-	"github.com/datum-cloud/galactic/cni/registration"
-	"github.com/datum-cloud/galactic/cni/route"
-	"github.com/datum-cloud/galactic/cni/veth"
-	"github.com/datum-cloud/galactic/cni/vrf"
-	"github.com/datum-cloud/galactic/debug"
-	"github.com/datum-cloud/galactic/util"
+	"github.com/datum-cloud/galactic-cni/cni/registration"
+	"github.com/datum-cloud/galactic-cni/cni/route"
+	"github.com/datum-cloud/galactic-cni/cni/veth"
+	"github.com/datum-cloud/galactic-cni/cni/vrf"
+	"github.com/datum-cloud/galactic-cni/debug"
+	"github.com/datum-cloud/galactic-cni/util"
 )
 
 type Termination struct {
