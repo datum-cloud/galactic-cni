@@ -4,8 +4,8 @@ import (
 	"fmt"
 
 	"github.com/coreos/go-iptables/iptables"
-	"github.com/datum-cloud/galactic-cni/cni/sysctl"
-	"github.com/datum-cloud/galactic-cni/util"
+	"github.com/datum-cloud/galactic-common/sysctl"
+	"github.com/datum-cloud/galactic-common/util"
 	"github.com/vishvananda/netlink"
 )
 

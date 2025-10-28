@@ -21,9 +21,9 @@ import (
 	"github.com/datum-cloud/galactic-cni/cni/registration"
 	"github.com/datum-cloud/galactic-cni/cni/route"
 	"github.com/datum-cloud/galactic-cni/cni/veth"
-	"github.com/datum-cloud/galactic-cni/cni/vrf"
 	"github.com/datum-cloud/galactic-cni/debug"
-	"github.com/datum-cloud/galactic-cni/util"
+	"github.com/datum-cloud/galactic-common/util"
+	"github.com/datum-cloud/galactic-common/vrf"
 )
 
 type Termination struct {
