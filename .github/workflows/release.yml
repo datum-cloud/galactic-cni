@@ -30,8 +30,7 @@ jobs:
         run: |
           mkdir package
           for arch in amd64 arm64; do
-            cp galactic-${arch} package/galactic-cli_${arch}
-            cp galactic-${arch} package/galactic-cni_${arch}
+            cp galactic-${arch} package/galactic_${arch}
           done
       - name: release
         uses: softprops/action-gh-release@v2

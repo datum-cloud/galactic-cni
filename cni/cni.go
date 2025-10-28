@@ -57,7 +57,7 @@ type PluginConf struct {
 
 func NewCommand() *cobra.Command {
 	return &cobra.Command{
-		Use:   "galactic-cni",
+		Use:   "galactic",
 		Short: "Galactic CNI plugin",
 		Run: func(cmd *cobra.Command, args []string) {
 			skel.PluginMainFuncs(
