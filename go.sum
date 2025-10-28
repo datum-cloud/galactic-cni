@@ -7,8 +7,8 @@ github.com/coreos/go-iptables v0.8.0/go.mod h1:Qe8Bv2Xik5FyTXwgIbLAnv2sWSBmvWdFE
 github.com/cpuguy83/go-md2man/v2 v2.0.6/go.mod h1:oOW0eioCTA6cOiMLiUPZOpcVxMig6NIQQ7OS05n1F4g=
 github.com/datum-cloud/galactic-agent v0.0.0-20250812012406-0722af92488d h1:jYBUj+OMdF8LOOuwQwFQdmIzHaOBnflwf62DxYB38uI=
 github.com/datum-cloud/galactic-agent v0.0.0-20250812012406-0722af92488d/go.mod h1:LfJDgJRPN5iMnUvznJGcrCcVl4x4sTBDnPAfPQDd8sk=
-github.com/datum-cloud/galactic-common v0.0.0-20251028162316-06f70d39f8ed h1:g1FgebSEgbJGq3RpB6GsJAObUFChP2IuP1OwBqINRlU=
-github.com/datum-cloud/galactic-common v0.0.0-20251028162316-06f70d39f8ed/go.mod h1:lJ8fte6gUiIi7cecSrfvicTQMgq+ejFrdN97ElARDR8=
+github.com/datum-cloud/galactic-common v0.0.0-20251028201425-f06de7d6ad01 h1:NYfkB6qPWPp0+mgpcr9R2v56efAZNbaetZPAazjkl/M=
+github.com/datum-cloud/galactic-common v0.0.0-20251028201425-f06de7d6ad01/go.mod h1:gXCoJaHM1Yy8au9VdKNbKJBGIKbqcPdfKvd9lQ9UNyM=
 github.com/go-logr/logr v1.4.3 h1:CjnDlHq8ikf6E492q6eKboGOC0T8CDaOvkHCIg8idEI=
 github.com/go-logr/logr v1.4.3/go.mod h1:9T104GzyrTigFIr8wt5mBrctHMim0Nb2HLGrmQ40KvY=
 github.com/go-logr/stdr v1.2.2 h1:hSWxHoqTgW2S2qGc0LTAI563KZ5YKYRhT3MFKZMbjag=
