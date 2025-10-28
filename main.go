@@ -7,8 +7,8 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"github.com/datum-cloud/galactic/cni"
-	"github.com/datum-cloud/galactic/debug"
+	"github.com/datum-cloud/galactic-cni/cni"
+	"github.com/datum-cloud/galactic-cni/debug"
 )
 
 func main() {

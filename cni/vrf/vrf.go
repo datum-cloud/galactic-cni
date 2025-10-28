@@ -5,8 +5,8 @@ import (
 	"math"
 	"slices"
 
-	"github.com/datum-cloud/galactic/cni/sysctl"
-	"github.com/datum-cloud/galactic/util"
+	"github.com/datum-cloud/galactic-cni/cni/sysctl"
+	"github.com/datum-cloud/galactic-cni/util"
 	"github.com/vishvananda/netlink"
 )
 

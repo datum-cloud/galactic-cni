@@ -5,7 +5,7 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/datum-cloud/galactic/util"
+	"github.com/datum-cloud/galactic-cni/util"
 )
 
 func TestParseIP(t *testing.T) {

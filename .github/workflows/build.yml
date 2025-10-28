@@ -50,7 +50,7 @@ jobs:
                      -e CGO_ENABLED=0 \
                      golang \
                      go build \
-                       -ldflags "-X 'github.com/datum-cloud/galactic/debug.DebugVersion=${DEBUG_VERSION}' -X 'github.com/datum-cloud/galactic/debug.DebugRef=${DEBUG_REF}'" \
+                       -ldflags "-X 'github.com/datum-cloud/galactic-cni/debug.DebugVersion=${DEBUG_VERSION}' -X 'github.com/datum-cloud/galactic-cni/debug.DebugRef=${DEBUG_REF}'" \
                        -o galactic-${{ matrix.arch }} ./main.go
       - name: upload
         uses: actions/upload-artifact@v4
