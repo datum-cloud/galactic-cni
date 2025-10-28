@@ -6,8 +6,7 @@ require (
 	github.com/containernetworking/cni v1.3.0
 	github.com/coreos/go-iptables v0.8.0
 	github.com/datum-cloud/galactic-agent v0.0.0-20250812012406-0722af92488d
-	github.com/datum-cloud/galactic-common v0.0.0-20251028162316-06f70d39f8ed
-	github.com/kenshaw/baseconv v0.1.1
+	github.com/datum-cloud/galactic-common v0.0.0-20251028201425-f06de7d6ad01
 	github.com/spf13/cobra v1.9.1
 	github.com/vishvananda/netlink v1.3.2-0.20250622222046-78aca1ace529
 	golang.org/x/sys v0.33.0
@@ -17,6 +16,7 @@ require (
 require (
 	github.com/BurntSushi/toml v1.1.0 // indirect
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
+	github.com/kenshaw/baseconv v0.1.1 // indirect
 	github.com/lorenzosaino/go-sysctl v0.3.1 // indirect
 	github.com/onsi/ginkgo/v2 v2.23.4 // indirect
 	github.com/onsi/gomega v1.37.0 // indirect

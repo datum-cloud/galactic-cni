@@ -10,8 +10,6 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"github.com/kenshaw/baseconv"
-
 	"github.com/containernetworking/cni/pkg/invoke"
 	"github.com/containernetworking/cni/pkg/skel"
 	"github.com/containernetworking/cni/pkg/types"
@@ -80,10 +78,6 @@ func parseConf(data []byte) (*PluginConf, error) {
 	return conf, nil
 }
 
-func Base62ToHex(value string) (string, error) {
-	return baseconv.Convert(value, baseconv.Digits62, baseconv.DigitsHex)
-}
-
 func getNetworks(pluginConf *PluginConf) ([]string, error) {
 	addresses := pluginConf.IPAM.Addresses
 	terminations := pluginConf.Terminations
@@ -128,11 +122,11 @@ func cmdAdd(args *skel.CmdArgs) error {
 	if err := hostDevice("ADD", args, pluginConf); err != nil {
 		return err
 	}
-	vpcHex, err := Base62ToHex(pluginConf.VPC)
+	vpcHex, err := util.Base62ToHex(pluginConf.VPC)
 	if err != nil {
 		return err
 	}
-	vpcAttachmentHex, err := Base62ToHex(pluginConf.VPCAttachment)
+	vpcAttachmentHex, err := util.Base62ToHex(pluginConf.VPCAttachment)
 	if err != nil {
 		return err
 	}
@@ -150,11 +144,11 @@ func cmdAdd(args *skel.CmdArgs) error {
 
 func cmdDel(args *skel.CmdArgs) error {
 	pluginConf, _ := parseConf(args.StdinData)
-	vpcHex, err := Base62ToHex(pluginConf.VPC)
+	vpcHex, err := util.Base62ToHex(pluginConf.VPC)
 	if err != nil {
 		return err
 	}
-	vpcAttachmentHex, err := Base62ToHex(pluginConf.VPCAttachment)
+	vpcAttachmentHex, err := util.Base62ToHex(pluginConf.VPCAttachment)
 	if err != nil {
 		return err
 	}
