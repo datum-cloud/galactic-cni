@@ -9,6 +9,8 @@ github.com/coreos/go-iptables v0.8.0/go.mod h1:Qe8Bv2Xik5FyTXwgIbLAnv2sWSBmvWdFE
 github.com/cpuguy83/go-md2man/v2 v2.0.6/go.mod h1:oOW0eioCTA6cOiMLiUPZOpcVxMig6NIQQ7OS05n1F4g=
 github.com/datum-cloud/galactic-agent v0.0.0-20250812012406-0722af92488d h1:jYBUj+OMdF8LOOuwQwFQdmIzHaOBnflwf62DxYB38uI=
 github.com/datum-cloud/galactic-agent v0.0.0-20250812012406-0722af92488d/go.mod h1:LfJDgJRPN5iMnUvznJGcrCcVl4x4sTBDnPAfPQDd8sk=
+github.com/datum-cloud/galactic-common v0.0.0-20251028162316-06f70d39f8ed h1:g1FgebSEgbJGq3RpB6GsJAObUFChP2IuP1OwBqINRlU=
+github.com/datum-cloud/galactic-common v0.0.0-20251028162316-06f70d39f8ed/go.mod h1:lJ8fte6gUiIi7cecSrfvicTQMgq+ejFrdN97ElARDR8=
 github.com/go-logr/logr v1.4.2 h1:6pFjapn8bFcIbiKo3XT4j/BhANplGihG6tvd+8rYgrY=
 github.com/go-logr/logr v1.4.2/go.mod h1:9T104GzyrTigFIr8wt5mBrctHMim0Nb2HLGrmQ40KvY=
 github.com/go-task/slim-sprig/v3 v3.0.0 h1:sUs3vkvUymDpBKi3qH1YSqBQk9+9D/8M2mN1vB6EwHI=

@@ -15,6 +15,7 @@ require (
 require (
 	github.com/BurntSushi/toml v1.1.0 // indirect
 	github.com/datum-cloud/galactic-agent v0.0.0-20250812012406-0722af92488d // indirect
+	github.com/datum-cloud/galactic-common v0.0.0-20251028162316-06f70d39f8ed // indirect
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
 	github.com/kenshaw/baseconv v0.1.1 // indirect
 	github.com/spf13/pflag v1.0.6 // indirect
