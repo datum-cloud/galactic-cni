@@ -6,7 +6,7 @@ require (
 	github.com/containernetworking/cni v1.3.0
 	github.com/coreos/go-iptables v0.8.0
 	github.com/datum-cloud/galactic-agent v0.0.0-20250812012406-0722af92488d
-	github.com/datum-cloud/galactic-common v0.0.0-20251028201425-f06de7d6ad01
+	github.com/datum-cloud/galactic-common v0.0.0-20251029005442-b849af046af2
 	github.com/spf13/cobra v1.9.1
 	github.com/vishvananda/netlink v1.3.2-0.20250622222046-78aca1ace529
 	golang.org/x/sys v0.33.0
