@@ -20,37 +20,18 @@ import (
 	"github.com/datum-cloud/galactic-cni/cni/route"
 	"github.com/datum-cloud/galactic-cni/cni/veth"
 	"github.com/datum-cloud/galactic-cni/debug"
+	"github.com/datum-cloud/galactic-common/cni"
 	"github.com/datum-cloud/galactic-common/util"
 	"github.com/datum-cloud/galactic-common/vrf"
 )
 
-type Termination struct {
-	Network string `json:"network"`
-	Via     string `json:"via,omitempty"`
-}
-
-type IPAM struct {
-	Type      string    `json:"type"`
-	Routes    []Route   `json:"routes,omitempty"`
-	Addresses []Address `json:"addresses,omitempty"`
-}
-
-type Route struct {
-	Dst string `json:"dst"`
-	GW  string `json:"gw,omitempty"`
-}
-
-type Address struct {
-	Address string `json:"address"`
-}
-
 type PluginConf struct {
 	types.PluginConf
-	VPC           string        `json:"vpc"`
-	VPCAttachment string        `json:"vpcattachment"`
-	MTU           int           `json:"mtu,omitempty"`
-	Terminations  []Termination `json:"terminations,omitempty"`
-	IPAM          IPAM          `json:"ipam,omitempty"`
+	VPC           string            `json:"vpc"`
+	VPCAttachment string            `json:"vpcattachment"`
+	MTU           int               `json:"mtu,omitempty"`
+	Terminations  []cni.Termination `json:"terminations,omitempty"`
+	IPAM          cni.IPAM          `json:"ipam,omitempty"`
 }
 
 func NewCommand() *cobra.Command {
@@ -181,8 +162,8 @@ func cmdDel(args *skel.CmdArgs) error {
 
 type HostDevicePluginConf struct {
 	types.PluginConf
-	Device string `json:"device"`
-	IPAM   IPAM   `json:"ipam,omitempty"`
+	Device string   `json:"device"`
+	IPAM   cni.IPAM `json:"ipam,omitempty"`
 }
 
 func hostDeviceExecutable() string {
